@@ -31,6 +31,13 @@ class YFPhoto {
 	 * @var string
 	 * @access protected
 	 */
+	protected $summary=null;
+
+	/**
+	 * Cодержит информацию о владельце фотографии. На данный момент информация ограничивается логином пользователя на Яндексе, который указывается во вложенном теге atom:name
+	 * @var string
+	 * @access protected
+	 */
 	protected $author=null;
 
 	/**
@@ -209,6 +216,15 @@ class YFPhoto {
 	 */
 	public function getId(){
 		return $this->id;
+	}
+
+	/**
+	 * Возвращает  текстовое описание
+	 * @return string
+	 * @access public
+	 */
+	public function getDesc() {
+		return $this->summary;
 	}
 
 	/**
@@ -623,6 +639,8 @@ class YFPhoto {
 					$message->addChild('title',$this->title);
 					$message->addChild('author');
 					$message->author->addChild('name',$this->author);
+					$message->addChild('summary');
+					$message->summary->addChild('name',$this->summary);
 					$message->addChild('link');
 					$message->link->addAttribute("href",$this->selfUrl);
 					$message->link->addAttribute("rel","self");
@@ -760,6 +778,7 @@ class YFPhoto {
 		
 		$this->id = $sxml->id;
 		$this->author = $sxml->author->name;
+		$this->summary = $sxml->summary;
 		$this->title = $sxml->title;
 		$this->publishedOn = $sxml->published;
 		$this->editedOn = $sxml->edited;
@@ -787,7 +806,7 @@ class YFPhoto {
 		$this->accessLevel  = $sxml->access->attributes()->value;
 		$this->content = $sxml->content->attributes()->src;
 
-		$photos_resourse = substr($sxml->content->attributes()->src,0,strlen($sxml->content->attributes()->src)-2);
+		$photos_resourse = substr($sxml->content->attributes()->src,0,strlen($sxml->content->attributes()->src)-4);
 		$this->photoOriginalUrl = $photos_resourse."orig";
 		$this->photoXLUrl = $sxml->content->attributes()->src;
 		$this->photoLUrl = $photos_resourse."L";
